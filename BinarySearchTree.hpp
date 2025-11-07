@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <queue>
+
 using namespace std;
 
 template <typename T> string toStr(const T &value) {
@@ -111,9 +113,41 @@ public:
   // Remove x from the tree. Nothing is done if x is not found.
   void remove(const Comparable &x) { remove(x, root); }
 
+  // Esta funcion se encarga de hacer un breadth first traversal
+  // a un arbol agrupando los nodos segun su nivel en el tree
   string BFT() const {
-    string st;
-    return st;
+
+      queue<BinaryNode*> q; // creamos un queue para recorrer y agrupar los nodos por su nivel
+      q.push(root); // primero insertamos el root al queue 
+      stringstream st; // creamos un stringstream para agrupar el resultado en un string para el resultado
+
+      st << "[";
+
+      while (!q.empty()) { // mientras el queue ni este vacio
+        int Level = q.size(); // variable para agrupar los nodos segun el nivel 
+        st << "[";
+
+      for (int i = 0; i < Level; i++) { // Loop para recorrer los nodos segun el nivel
+          BinaryNode* current = q.front(); // Guardamos el elemento que esta en el top del queue
+          q.pop(); // le hacemos pop
+          st << current->element; // lo añadimos al string del resultado
+
+          if (i < Level - 1) // si quedan mas elementos en el nivel
+            st << ",";  // añadimos una coma al string para separarlos
+
+          if (current->left) // si el nodo actual tiene un hijo izquierdo 
+            q.push(current->left); // lo insertamos en el queue 
+          if (current->right) // si el nodo actual tiene un hijo derecho 
+            q.push(current->right); // lo insertamos en el queue 
+         }
+            
+        st << "]"; // añadimos un "]" cuando terminamos de agrupar los nodos de este nivel
+
+        if (!q.empty()) // si todavia hay niveles por recorrer
+            st << ","; // añadimos una coma entre los niveles
+      }
+    st << "]"; // cerramos el grupo principal
+    return st.str(); // devolvemos el string del resultado
   }
 
 private:
@@ -269,6 +303,7 @@ private:
       toInorderStr(t->right, st);
     }
   }
+
 
   // Internal method to clone subtree.
   BinaryNode *clone(BinaryNode *t) const {
